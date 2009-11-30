@@ -134,6 +134,11 @@ public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
 
     }
 
+    public MouseManager getMouseManager() {
+        return _mouseManager;
+    }
+
+
     public void run() {
         try {
             _frameHandler.init();

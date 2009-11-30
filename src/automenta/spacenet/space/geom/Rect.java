@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package automenta.spacenet.space.object;
+package automenta.spacenet.space.geom;
 
 import automenta.spacenet.space.HasPosition3;
 import automenta.spacenet.space.HasScale2;

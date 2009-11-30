@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package automenta.spacenet.space.object;
+package automenta.spacenet.space.geom;
 
 import automenta.spacenet.space.*;
 import automenta.spacenet.space.surface.ColorSurface;
