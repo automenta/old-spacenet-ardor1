@@ -28,7 +28,9 @@ public class DemoBox extends ArdorSpaceTime {
     
     public static void main(String[] args) {
         newWindow(DemoBox.class);
-        newWindow(DemoBox.class);
+
+        //Multiple windows can be created by calling newWindow repeatedly
+        //newWindow(DemoBox.class);
     }
 
     @Override protected void initWindow() {

@@ -202,6 +202,15 @@ public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
 
         _root.getSceneHints().setRenderBucketType(RenderBucketType.Opaque);
 
+        if (_canvas instanceof JoglCanvas) {
+            ((JoglCanvas)_canvas).addComponentListener(new ComponentAdapter() {
+                @Override public void componentResized(ComponentEvent e) {
+                    java.awt.Dimension s = e.getComponent().getSize();
+                    _canvas.getCanvasRenderer().getCamera().resize(s.width, s.height);
+                }
+            });
+        }
+
         initWindow();
     }
 
@@ -214,15 +223,6 @@ public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
             exit();
         }
 
-        if (_canvas instanceof JoglCanvas) {
-            ((JoglCanvas)_canvas).addComponentListener(new ComponentAdapter() {
-                @Override public void componentResized(ComponentEvent e) {
-                    super.componentResized(e);
-                    java.awt.Dimension s = e.getComponent().getSize();
-                    _canvas.getCanvasRenderer().getCamera().resize(s.width, s.height);
-                }
-            });
-        }
 
 
 
