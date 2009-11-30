@@ -6,7 +6,8 @@
 package automenta.spacenet.run;
 
 import automenta.spacenet.space.*;
-import automenta.spacenet.space.Box.BoxShape;
+import automenta.spacenet.space.object.Box;
+import automenta.spacenet.space.object.Box.BoxShape;
 import automenta.spacenet.space.surface.ColorSurface;
 import automenta.spacenet.var.Quat;
 import automenta.spacenet.var.V3;
@@ -27,10 +28,8 @@ public class DemoBox extends ArdorSpaceTime {
     }
     
     public static void main(String[] args) {
-        newWindow(DemoBox.class);
-
         //Multiple windows can be created by calling newWindow repeatedly
-        //newWindow(DemoBox.class);
+        newWindow(DemoBox.class);
     }
 
     @Override protected void initWindow() {

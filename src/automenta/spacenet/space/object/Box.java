@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package automenta.spacenet.space;
+package automenta.spacenet.space.object;
 
+import automenta.spacenet.space.*;
 import automenta.spacenet.space.surface.ColorSurface;
 import automenta.spacenet.var.Quat;
 import automenta.spacenet.var.V3;
@@ -15,7 +16,7 @@ import com.ardor3d.scenegraph.Spatial;
  *
  * @author seh
  */
-public class Box extends Space  {
+public class Box extends Space implements HasPosition3, HasScale3  {
 
     Spatial shapeSpatial;
     private final V3 position;
@@ -40,22 +41,8 @@ public class Box extends Space  {
         setShape(shape);
     }
 
-    @Override
-    protected void setParent(Node parent) {
-        Spatial previousParent = getParent();
 
-        if (parent == null) {
-            beforeDetached(previousParent);
-        }
-
-        super.setParent(parent);
-
-        if (parent != null) {
-            afterAttached(parent);
-        }
-    }
-
-    protected void afterAttached(Spatial newParent) {
+    @Override protected void afterAttached(Spatial newParent) {
         positionChange = position.add(new V3.IfV3Changes() {
             @Override public void onV3Changed(V3 v) {
                 positionChanged();
@@ -69,7 +56,8 @@ public class Box extends Space  {
 
         //TODO add Orientation change
     }
-    protected void beforeDetached(Spatial parent) {
+
+    @Override protected void beforeDetached(Spatial parent) {
         System.out.println(this + " detached from " + parent);
         position.remove(positionChange);
         scale.remove(scaleChange);        
@@ -110,9 +98,18 @@ public class Box extends Space  {
         return this;
     }
 
-    public ColorSurface add(ColorSurface cs) {
-        //surfaces.add(cs);
-        cs.apply(this);
-        return cs;
+    @Override public V3 getPosition() {
+        return position;
     }
+
+    @Override
+    public V3 getSize() {
+        return scale;
+    }
+
+
+
+
+
+
 }

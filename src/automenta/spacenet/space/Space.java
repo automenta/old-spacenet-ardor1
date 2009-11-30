@@ -5,10 +5,9 @@
 
 package automenta.spacenet.space;
 
+import automenta.spacenet.space.surface.ColorSurface;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.Spatial;
-import com.ardor3d.util.GameTaskQueue;
-import com.ardor3d.util.GameTaskQueueManager;
 
 /**
  *
@@ -38,4 +37,34 @@ public class Space extends Node {
             return null;
         return r;
     }
+
+    public ColorSurface add(ColorSurface cs) {
+        //surfaces.add(cs);
+        cs.apply(this);
+        return cs;
+    }
+
+        @Override
+    protected void setParent(Node parent) {
+        Spatial previousParent = getParent();
+
+        if (parent == null) {
+            beforeDetached(previousParent);
+        }
+
+        super.setParent(parent);
+
+        if (parent != null) {
+            afterAttached(parent);
+        }
+    }
+
+    protected void afterAttached(Spatial parent) {
+    }
+
+    protected void beforeDetached(Spatial previousParent) {
+    }
+
+
+
 }
