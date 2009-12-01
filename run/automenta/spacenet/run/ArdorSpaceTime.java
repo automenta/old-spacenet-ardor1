@@ -9,11 +9,12 @@
  */
 package automenta.spacenet.run;
 
+import automenta.spacenet.run.geom.DemoRect;
 import automenta.spacenet.space.*;
-import automenta.spacenet.space.control.Touchable;
-import automenta.spacenet.space.control.Pressable;
-import automenta.spacenet.space.control.Tangible;
+import automenta.spacenet.space.control.pointer.ArdorPointer;
+import automenta.spacenet.space.video.ProcessBox;
 import com.ardor3d.example.*;
+import com.ardor3d.intersection.PickResults;
 import java.awt.EventQueue;
 import java.awt.event.ComponentEvent;
 import java.net.URL;
@@ -36,10 +37,8 @@ import com.ardor3d.image.util.AWTImageLoader;
 import com.ardor3d.image.util.ScreenShotImageExporter;
 import com.ardor3d.input.ControllerWrapper;
 import com.ardor3d.input.FocusWrapper;
-import com.ardor3d.input.GrabbedState;
 import com.ardor3d.input.Key;
 import com.ardor3d.input.KeyboardWrapper;
-import com.ardor3d.input.MouseButton;
 import com.ardor3d.input.MouseManager;
 import com.ardor3d.input.MouseWrapper;
 import com.ardor3d.input.PhysicalLayer;
@@ -48,19 +47,11 @@ import com.ardor3d.input.logical.AnyKeyCondition;
 import com.ardor3d.input.logical.InputTrigger;
 import com.ardor3d.input.logical.KeyPressedCondition;
 import com.ardor3d.input.logical.LogicalLayer;
-import com.ardor3d.input.logical.MouseButtonPressedCondition;
-import com.ardor3d.input.logical.MouseButtonReleasedCondition;
-import com.ardor3d.input.logical.MouseMovedCondition;
 import com.ardor3d.input.logical.TriggerAction;
 import com.ardor3d.input.logical.TwoInputStates;
-import com.ardor3d.intersection.PickData;
-import com.ardor3d.intersection.PickResults;
-import com.ardor3d.intersection.PickingUtil;
-import com.ardor3d.intersection.PrimitivePickResults;
 import com.ardor3d.light.PointLight;
 import com.ardor3d.math.ColorRGBA;
 import com.ardor3d.math.Ray3;
-import com.ardor3d.math.Vector2;
 import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.Renderer;
 import com.ardor3d.renderer.TextureRendererFactory;
@@ -69,7 +60,6 @@ import com.ardor3d.renderer.queue.RenderBucketType;
 import com.ardor3d.renderer.state.LightState;
 import com.ardor3d.renderer.state.WireframeState;
 import com.ardor3d.renderer.state.ZBufferState;
-import com.ardor3d.scenegraph.Spatial;
 import com.ardor3d.scenegraph.event.DirtyType;
 import com.ardor3d.util.Constants;
 import com.ardor3d.util.ContextGarbageCollector;
@@ -89,9 +79,10 @@ import com.google.inject.Scopes;
 import com.google.inject.Stage;
 import java.awt.event.ComponentAdapter;
 
-public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
+abstract public class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
 
     private static final Logger logger = Logger.getLogger(ArdorSpaceTime.class.getName());
+
     protected final LogicalLayer _logicalLayer;
     protected PhysicalLayer _physicalLayer;
     protected final Space _root = new Space();
@@ -112,11 +103,12 @@ public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
     protected static int _minDepthBits = -1;
     protected static int _minAlphaBits = -1;
     protected static int _minStencilBits = -1;
-    private PrimitivePickResults pickResults;
-    private Touchable currentlyPicked;
-    private Tangible currentTangible;
-    private Pressable currentlyPressed;
-    private PickData tangiblePick;
+    private ArdorPointer pointer;
+    
+
+
+
+
 
     @Inject
     public ArdorSpaceTime(final LogicalLayer logicalLayer, final FrameHandler frameHandler) {
@@ -149,6 +141,14 @@ public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
 
     public void exit() {
         _exit = true;
+    }
+
+    public LogicalLayer getLogicalLayer() {
+        return _logicalLayer;
+    }
+
+    public NativeCanvas getCanvas() {
+        return _canvas;
     }
 
     @MainThread
@@ -207,14 +207,11 @@ public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
             });
         }
 
-        // Set up a reusable pick results
-        pickResults = new PrimitivePickResults();
-        pickResults.setCheckDistance(true);
 
         initWindow();
     }
 
-    protected abstract void initWindow();
+    abstract protected void initWindow();
 
     @MainThread
     public void update(final ReadOnlyTimer timer) {
@@ -302,90 +299,26 @@ public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
         }
     }
 
-    public PickResults doPick(final Ray3 pickRay) {
-
-        pickResults.clear();
-
-        pickResults.setCheckDistance(true);
-        PickingUtil.findPick(getRoot(), pickRay, pickResults);
-
-        processPicks(pickResults);
-
-        return pickResults;
-    }
-
-    protected void processPicks(final PrimitivePickResults pickResults) {
-
-//        for (int i = 0; i < pickResults.getNumber(); i++) {
-//            PickData pd = pickResults.getPickData(i);
-//        }
-
-        int i = 0;
-        while (pickResults.getNumber() > 0 && pickResults.getPickData(i).getIntersectionRecord().getNumberOfIntersection() == 0 && ++i < pickResults.getNumber()) {
-        }
-        if (pickResults.getNumber() > i) {
-            final PickData pick = pickResults.getPickData(i);
-
-            final Tangible topLevel = getTangible(pick.getTargetMesh());
-            setTangible(topLevel, pick);
-
-            if (topLevel instanceof Touchable) {
-                setPicked((Touchable) topLevel, pick);
-            } else {
-                setPicked(null, null);
-            }
-
-        } else {
-            setTangible(null, null);
-            setPicked(null, null);
-            //System.err.println("picked: nothing");
-        }
-    }
-
-    private void setTangible(Tangible t, PickData pick) {
-        this.currentTangible = t;
-        this.tangiblePick = pick;
-    }
-
-    private void setPicked(Touchable p, PickData pick) {
-
-        if (this.currentlyPicked == p) {
-            if (p != null) {
-                currentlyPicked.touching(pick);
-            }
-        } else {
-
-            if (this.currentlyPicked != null) {
-                currentlyPicked.touchStop();
-            }
-
-            this.currentlyPicked = p;
-
-            if (currentlyPicked != null) {
-                p.touchStart(pick);
-            }
-        }
-    }
-
-    public static Tangible getTangible(final Spatial target) {
-        if (target instanceof Tangible) {
-            if (((Tangible) target).isTangible()) {
-                return ((Tangible) target);
-            }
-        }
-        if (target.getParent() == null) {
-            return null;
-        } else {
-            return getTangible(target.getParent());
-        }
-    }
-
     protected void quit(final Renderer renderer) {
         ContextGarbageCollector.doFinalCleanup(renderer);
         _canvas.close();
     }
 
-    public static void newWindow(final Class<? extends ArdorSpaceTime> exampleClazz) {
+    public static class ArdorSpaceTimeProcess extends ArdorSpaceTime {
+
+        @Inject public ArdorSpaceTimeProcess(final LogicalLayer logicalLayer, final FrameHandler frameWork) {
+            super(logicalLayer, frameWork);
+        }
+
+        @Override protected void initWindow() { }
+    }
+
+    public static void newWindow(final ProcessBox box) {
+        ArdorSpaceTime a = newWindow(ArdorSpaceTimeProcess.class);
+        a.getRoot().add(box);
+    }
+
+    public static ArdorSpaceTime newWindow(final Class<? extends ArdorSpaceTime> exampleClazz) {
         // Ask for properties
         final PropertiesGameSettings prefs = getAttributes(new PropertiesGameSettings("ardorSettings.properties", null));
 
@@ -463,6 +396,8 @@ public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
         gameRunnable._physicalLayer = physicalLayer;
 
         new Thread(gameRunnable).start();
+
+        return gameRunnable;
     }
 
     protected static PropertiesGameSettings getAttributes(final PropertiesGameSettings settings) {
@@ -535,6 +470,7 @@ public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
             return;
         }
 
+
         _controlHandle = FirstPersonControl.setupTriggers(_logicalLayer, _worldUp, true);
 
 
@@ -601,76 +537,11 @@ public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
         }));
 
 
-        initPointer();
+        this.pointer = new ArdorPointer(this);
     }
 
-    protected void initPointer() {
-//        _logicalLayer.registerTrigger(new InputTrigger(new MouseButtonClickedCondition(MouseButton.RIGHT),
-//            new TriggerAction() {
-//
-//                public void perform(final Canvas source, final TwoInputStates inputStates, final double tpf) {
-//
-//                    final Vector2 pos = Vector2.fetchTempInstance().set(
-//                        inputStates.getCurrent().getMouseState().getX(),
-//                        inputStates.getCurrent().getMouseState().getY());
-//                    final Ray3 pickRay = new Ray3();
-//                    _canvas.getCanvasRenderer().getCamera().getPickRay(pos, false, pickRay);
-//                    Vector2.releaseTempInstance(pos);
-//                    doPick(pickRay);
-//                }
-//            }));
-//
-//        final Predicate<TwoInputStates> clickLeftOrRight = Predicates.or(new MouseButtonClickedCondition(
-//            MouseButton.LEFT), new MouseButtonClickedCondition(MouseButton.RIGHT));
-//
-//        _logicalLayer.registerTrigger(new InputTrigger(clickLeftOrRight, new TriggerAction() {
-//
-//            public void perform(final Canvas source, final TwoInputStates inputStates, final double tpf) {
-//                System.err.println("clicked: " + inputStates.getCurrent().getMouseState().getClickCounts());
-//            }
-//        }));
-
-        _logicalLayer.registerTrigger(new InputTrigger(new MouseButtonPressedCondition(MouseButton.LEFT),
-            new TriggerAction() {
-
-                public void perform(final Canvas source, final TwoInputStates inputState, final double tpf) {
-                    if (_mouseManager.isSetGrabbedSupported()) {
-                        _mouseManager.setGrabbed(GrabbedState.GRABBED);
-                    }
-
-                    if (currentTangible instanceof Pressable) {
-                        currentlyPressed = (Pressable)currentTangible;
-                        ((Pressable) currentTangible).pressStart(tangiblePick);
-                    }
-                }
-            }));
-
-        _logicalLayer.registerTrigger(new InputTrigger(new MouseButtonReleasedCondition(MouseButton.LEFT),
-            new TriggerAction() {
-
-                public void perform(final Canvas source, final TwoInputStates inputState, final double tpf) {
-                    if (_mouseManager.isSetGrabbedSupported()) {
-                        _mouseManager.setGrabbed(GrabbedState.NOT_GRABBED);
-                    }
-
-                    if (currentlyPressed != null) {
-                        currentlyPressed.pressStop(tangiblePick);
-                        currentlyPressed = null;
-                    }
-                }
-            }));
-
-        _logicalLayer.registerTrigger(new InputTrigger(new MouseMovedCondition(), new TriggerAction() {
-
-            Vector2 pos = new Vector2();
-            final Ray3 pickRay = new Ray3();
-
-            public void perform(final Canvas source, final TwoInputStates inputStates, final double tpf) {
-                pos.set(inputStates.getCurrent().getMouseState().getX(), inputStates.getCurrent().getMouseState().getY());
-                _canvas.getCanvasRenderer().getCamera().getPickRay(pos, false, pickRay);
-
-                doPick(pickRay);
-            }
-        }));
+    @Override
+    public PickResults doPick(Ray3 arg0) {
+        return null;
     }
 }

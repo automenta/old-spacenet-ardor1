@@ -9,26 +9,20 @@ import automenta.spacenet.space.geom.Rect;
 import automenta.spacenet.space.geom.Rect.RectShape;
 import automenta.spacenet.space.geom.text2d.BmpTextLineRect;
 import automenta.spacenet.space.geom.text2d.BmpFont;
-import com.ardor3d.framework.FrameHandler;
-import com.ardor3d.input.logical.LogicalLayer;
+import automenta.spacenet.space.video.ProcessBox;
 import com.ardor3d.math.ColorRGBA;
 import com.ardor3d.scenegraph.Spatial;
-import com.google.inject.Inject;
 import java.awt.Font;
 
 /**
  *
  * @author seh
  */
-public class DemoText1 extends ArdorSpaceTime {
-
-    @Inject public DemoText1(final LogicalLayer logicalLayer, final FrameHandler frameWork) {
-        super(logicalLayer, frameWork);
-    }
+public class DemoText1 extends ProcessBox {
 
     public static void main(String[] args) {
         //Multiple windows can be created by calling newWindow repeatedly
-        newWindow(DemoText1.class);
+        ArdorSpaceTime.newWindow(new DemoText1());
     }
 
     Font awtFont = new Font("Arial", Font.PLAIN, 32);
@@ -42,10 +36,10 @@ public class DemoText1 extends ArdorSpaceTime {
     }
 
     @Override
-    protected void initWindow() {        
-        getRoot().add(newText("Abc", 32));
+    protected void start() {
+        add(newText("Abc", 32));
 
-        Rect r = getRoot().add(new Rect(RectShape.Rect).move(2,1,0));
+        Rect r = add(new Rect(RectShape.Rect).move(2,1,0));
         r.add(newText("Dyz", 32));
 
     }

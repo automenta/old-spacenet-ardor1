@@ -11,14 +11,11 @@ import automenta.spacenet.space.control.Pressable;
 import automenta.spacenet.space.geom.Box;
 import automenta.spacenet.space.geom.Rect;
 import automenta.spacenet.space.surface.ColorSurface;
-import com.ardor3d.framework.FrameHandler;
-import com.ardor3d.input.logical.LogicalLayer;
+import automenta.spacenet.space.video.ProcessBox;
 import com.ardor3d.intersection.PickData;
 import com.ardor3d.math.Vector3;
-import com.ardor3d.scenegraph.Node;
-import com.google.inject.Inject;
 
-public class DemoPick extends ArdorSpaceTime {
+public class DemoPick extends ProcessBox {
 
 
     public class PickableRect extends Rect implements Touchable {
@@ -116,23 +113,20 @@ public class DemoPick extends ArdorSpaceTime {
 
 
 
-    @Inject
-    public DemoPick(final LogicalLayer logicalLayer, final FrameHandler frameWork) {
-        super(logicalLayer, frameWork);
+    
 
-    }
-
+    
     @Override
-    protected void initWindow() {
-        getRoot().add(new PickableBox().move(-1, 1, 0));
-        getRoot().add(new PickableRect().move(1, 1, 0));
-        getRoot().add(new PressableBox().move(-1, -1, 0));
+    protected void start() {
+        add(new PickableBox().move(-1, 1, 0));
+        add(new PickableRect().move(1, 1, 0));
+        add(new PressableBox().move(-1, -1, 0));
 
     }
+
 
     public static void main(String[] args) {
-        //Multiple windows can be created by calling newWindow repeatedly
-        newWindow(DemoPick.class);
+        ArdorSpaceTime.newWindow(new DemoPick());
     }
 
     

@@ -5,40 +5,34 @@
 
 package automenta.spacenet.run.geom;
 
-import automenta.spacenet.run.*;
+import automenta.spacenet.run.ArdorSpaceTime;
 import automenta.spacenet.space.*;
 import automenta.spacenet.space.geom.Box;
 import automenta.spacenet.space.geom.Box.BoxShape;
 import automenta.spacenet.space.surface.ColorSurface;
+import automenta.spacenet.space.video.ProcessBox;
 import automenta.spacenet.var.Quat;
 import automenta.spacenet.var.V3;
-import com.ardor3d.framework.FrameHandler;
-import com.ardor3d.input.logical.LogicalLayer;
 import com.ardor3d.scenegraph.Spatial;
-import com.google.inject.Inject;
 
 /**
  *
  * @author seh
  */
-public class DemoBox extends ArdorSpaceTime {
+public class DemoBox extends ProcessBox {
 
-    @Inject
-    public DemoBox(final LogicalLayer logicalLayer, final FrameHandler frameWork) {
-        super(logicalLayer, frameWork);
-    }
     
     public static void main(String[] args) {
         //Multiple windows can be created by calling newWindow repeatedly
-        newWindow(DemoBox.class);
+        ArdorSpaceTime.newWindow(new DemoBox());
     }
 
-    @Override protected void initWindow() {
+    @Override protected void start() {
         final V3 pos = new V3(0,0,0);
         final V3 scale = new V3(1,1,1);
         final Quat orientation = Quat.fromAngles(0, 0, 0);
         
-        final Box b = getRoot().add(new Box(pos, scale, orientation, BoxShape.Cubic));
+        final Box b = add(new Box(pos, scale, orientation, BoxShape.Cubic));
         final ColorSurface cs = b.add(new ColorSurface(0.8f, 0.5f, 0.3f));
 
         b.add(new Repeat() {
