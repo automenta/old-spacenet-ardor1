@@ -3,12 +3,12 @@
  * and open the template in the editor.
  */
 
-package automenta.spacenet.space.control;
+package automenta.spacenet.var;
 
 /**
  *
  * @author seh
  */
-public interface Clickable extends Tangible {
+public class SetVar {
 
 }

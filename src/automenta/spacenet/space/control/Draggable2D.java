@@ -9,6 +9,6 @@ package automenta.spacenet.space.control;
  *
  * @author seh
  */
-public interface Clickable extends Tangible {
+public interface Draggable2D {
 
 }

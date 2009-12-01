@@ -5,8 +5,110 @@
 
 package automenta.spacenet.run.control;
 
-public class DemoPick  {
+import automenta.spacenet.run.ArdorSpaceTime;
+import automenta.spacenet.space.control.Pickable;
+import automenta.spacenet.space.geom.Box;
+import automenta.spacenet.space.geom.Rect;
+import automenta.spacenet.space.surface.ColorSurface;
+import com.ardor3d.framework.FrameHandler;
+import com.ardor3d.input.logical.LogicalLayer;
+import com.ardor3d.intersection.PickData;
+import com.ardor3d.math.Vector3;
+import com.ardor3d.scenegraph.Node;
+import com.google.inject.Inject;
 
+public class DemoPick extends ArdorSpaceTime {
+
+
+    public class PickableRect extends Rect implements Pickable {
+        private final ColorSurface cs;
+
+        public PickableRect() {
+            super(RectShape.Rect);
+
+            cs = add(new ColorSurface());
+        }
+
+        @Override
+        public void pickStart(PickData pick) {
+        }
+
+        @Override
+        public void pick(PickData pick) {
+            
+            int numInt = pick.getIntersectionRecord().getNumberOfIntersection();
+            if (numInt != 1) {
+                System.out.println("odd, # of intersections = " + numInt);
+                return;
+            }
+
+            Vector3 p = pick.getIntersectionRecord().getIntersectionPoint(0);
+            
+            cs.color(Math.cos(p.getX()), Math.sin(p.getY()), Math.cos(p.getZ()));
+        }
+
+        @Override
+        public void pickStop() {
+        }
+
+        @Override public boolean isTangible() { return true; }
+
+    }
+
+    public class PickableBox extends Box implements Pickable {
+        private final ColorSurface color;
+
+        public PickableBox() {
+            super(BoxShape.Sided);
+
+            color = add(new ColorSurface(1,1,1));
+
+            pickStop();
+        }
+
+        @Override
+        public void pickStart(PickData pick) {
+            color.color(1, 0, 0);
+        }
+
+        @Override
+        public void pickStop() {
+            color.color(0, 0, 1);
+        }
+
+        @Override
+        public void pick(PickData pick) {
+        }
+
+        @Override public boolean isTangible() { return true; }
+
+        
+    }
+    
+
+
+    @Inject
+    public DemoPick(final LogicalLayer logicalLayer, final FrameHandler frameWork) {
+        super(logicalLayer, frameWork);
+
+    }
+
+    @Override
+    protected void initWindow() {
+        Node n = new Node();
+        getRoot().add(n);
+        
+        getRoot().add(new PickableBox().move(-1, 0, 0));
+        //n.attachChild(new PickableRect().move(-1, 0, 0));
+        getRoot().add(new PickableRect().move(1, 0, 0));
+        //n.attachChild(new PickableRect().move(1, 0, 0));
+
+    }
+
+    public static void main(String[] args) {
+        //Multiple windows can be created by calling newWindow repeatedly
+        newWindow(DemoPick.class);
+    }
 
     
 }

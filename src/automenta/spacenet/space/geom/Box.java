@@ -5,18 +5,17 @@
 package automenta.spacenet.space.geom;
 
 import automenta.spacenet.space.*;
-import automenta.spacenet.space.surface.ColorSurface;
 import automenta.spacenet.var.Quat;
 import automenta.spacenet.var.V3;
 import automenta.spacenet.var.V3.IfV3Changes;
-import com.ardor3d.scenegraph.Node;
+import com.ardor3d.bounding.OrientedBoundingBox;
 import com.ardor3d.scenegraph.Spatial;
 
 /**
  *
  * @author seh
  */
-public class Box extends Space implements HasPosition3, HasScale3  {
+public class Box extends Space implements HasPosition3, HasScale3 {
 
     Spatial shapeSpatial;
     private final V3 position;
@@ -31,6 +30,10 @@ public class Box extends Space implements HasPosition3, HasScale3  {
 
     }
 
+    public Box(BoxShape b) {
+        this(new V3(), new V3(1, 1, 1), new Quat(), b);
+    }
+
     public Box(V3 position, V3 scale, Quat orientation, BoxShape shape) {
         super();
 
@@ -38,34 +41,41 @@ public class Box extends Space implements HasPosition3, HasScale3  {
         this.scale = scale;
         this.ori = orientation;
 
+
         setShape(shape);
     }
 
-
     @Override protected void afterAttached(Spatial newParent) {
         positionChange = position.add(new V3.IfV3Changes() {
+
             @Override public void onV3Changed(V3 v) {
                 positionChanged();
             }
         });
         scaleChange = scale.add(new V3.IfV3Changes() {
+
             @Override public void onV3Changed(V3 v) {
                 sizeChanged();
             }
         });
 
         //TODO add Orientation change
+
+        positionChanged();
+        sizeChanged();
+
     }
 
     @Override protected void beforeDetached(Spatial parent) {
         System.out.println(this + " detached from " + parent);
         position.remove(positionChange);
-        scale.remove(scaleChange);        
+        scale.remove(scaleChange);
     }
 
     protected void positionChanged() {
         setTranslation(position);
     }
+
     protected void sizeChanged() {
         setScale(scale);
     }
@@ -75,16 +85,19 @@ public class Box extends Space implements HasPosition3, HasScale3  {
             detachChild(shapeSpatial);
         }
 
+
         switch (shape) {
             case Empty:
                 shapeSpatial = null;
                 break;
             case Sided:
-                shapeSpatial = new com.ardor3d.scenegraph.shape.Box();                
+                com.ardor3d.scenegraph.shape.Box b = new com.ardor3d.scenegraph.shape.Box();
+                b.setModelBound(new OrientedBoundingBox());
+                shapeSpatial = b;
                 break;
         }
 
-        if (shapeSpatial!=null) {
+        if (shapeSpatial != null) {
             attachChild(shapeSpatial);
         }
     }
@@ -93,6 +106,7 @@ public class Box extends Space implements HasPosition3, HasScale3  {
         position.set(px, py, pz);
         return this;
     }
+
     public Box scale(double sx, double sy, double sz) {
         scale.set(sx, sy, sz);
         return this;
@@ -106,10 +120,4 @@ public class Box extends Space implements HasPosition3, HasScale3  {
     public V3 getSize() {
         return scale;
     }
-
-
-
-
-
-
 }

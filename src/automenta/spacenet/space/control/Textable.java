@@ -5,10 +5,6 @@
 
 package automenta.spacenet.space.control;
 
-/**
- *
- * @author seh
- */
-public interface Clickable extends Tangible {
-
+/** receives text (ex: keyboard or voice input) */
+public interface Textable {
 }

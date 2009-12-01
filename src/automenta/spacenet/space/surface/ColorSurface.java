@@ -29,6 +29,10 @@ public class ColorSurface {
     public ColorSurface(float r, float g, float b) {
         this(new ColorRGBA(r, g, b, 1.0f));
     }
+
+    public ColorSurface() {
+        this(0.5f, 0.5f, 0.5f);
+    }
     
     public void apply(Spatial s) {
         applyTo(s);
@@ -49,5 +53,9 @@ public class ColorSurface {
     public void color(float r, float g, float b) {
         color.set(r, g, b, 1.0f);
         applyAll();
+    }
+
+    public void color(double r, double g, double b) {
+        color((float)r, (float)g, (float)b);
     }
 }

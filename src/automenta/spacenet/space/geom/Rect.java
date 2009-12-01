@@ -13,8 +13,9 @@ import automenta.spacenet.var.V2;
 import automenta.spacenet.var.V2.IfV2Changes;
 import automenta.spacenet.var.V3;
 import automenta.spacenet.var.V3.IfV3Changes;
-import com.ardor3d.scenegraph.Node;
+import com.ardor3d.bounding.OrientedBoundingBox;
 import com.ardor3d.scenegraph.Spatial;
+import com.ardor3d.scenegraph.shape.Quad;
 
 /**
  *
@@ -33,6 +34,10 @@ public class Rect extends Space implements HasPosition3, HasScale2 {
 
         Empty, Rect
 
+    }
+
+    public Rect(RectShape shape) {
+        this(new V3(0), new V2(1), new Quat(), shape);
     }
 
     public Rect(V3 position, V2 scale, Quat orientation, RectShape shape) {
@@ -59,9 +64,13 @@ public class Rect extends Space implements HasPosition3, HasScale2 {
         });
 
         //TODO add Orientation change
+
+        positionChanged();
+        sizeChanged();
+
     }
     protected void beforeDetached(Spatial parent) {
-        System.out.println(this + " detached from " + parent);
+        //System.out.println(this + " detached from " + parent);
         position.remove(positionChange);
         scale.remove(scaleChange);
     }
@@ -83,7 +92,9 @@ public class Rect extends Space implements HasPosition3, HasScale2 {
                 shapeSpatial = null;
                 break;
             case Rect:
-                shapeSpatial = new com.ardor3d.scenegraph.shape.Quad("", 1, 1);
+                Quad s = new com.ardor3d.scenegraph.shape.Quad("", 1, 1);
+                s.setModelBound(new OrientedBoundingBox());
+                shapeSpatial = s;
                 break;
         }
 

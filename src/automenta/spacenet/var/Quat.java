@@ -19,4 +19,8 @@ public class Quat extends Quaternion {
         Quaternion q = new Quaternion().fromEulerAngles(heading, attitude, bank);
         return new Quat(q);
     }
+
+    public Quat() {
+        super();
+    }
 }

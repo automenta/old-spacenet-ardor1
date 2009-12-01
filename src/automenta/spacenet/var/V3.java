@@ -14,6 +14,14 @@ public class V3 extends Vector3 {
     //TODO lazy instantiate list with ensureChangesAllocated
     private List<IfV3Changes> ifChanges = new LinkedList();
 
+    public V3() {
+        this(0,0,0);
+    }
+
+    public V3(double s) {
+        this(s,s,s);
+    }
+
     public V3(double x, double y, double z) {
         super(x, y, z);
     }
