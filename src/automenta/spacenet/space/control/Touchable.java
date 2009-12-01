@@ -11,11 +11,11 @@ import com.ardor3d.intersection.PickData;
  *
  * @author seh
  */
-public interface Pickable extends Tangible {
+public interface Touchable extends Tangible {
 
-    public void pickStart(PickData pick);
-    public void pick(PickData pick);
-    public void pickStop();
+    public void touchStart(PickData pick);
+    public void touching(PickData pick);
+    public void touchStop();
 
     
 }

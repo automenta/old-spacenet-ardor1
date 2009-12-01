@@ -10,7 +10,7 @@
 package automenta.spacenet.run;
 
 import automenta.spacenet.space.*;
-import automenta.spacenet.space.control.Pickable;
+import automenta.spacenet.space.control.Touchable;
 import automenta.spacenet.space.control.Pressable;
 import automenta.spacenet.space.control.Tangible;
 import com.ardor3d.example.*;
@@ -113,7 +113,7 @@ public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
     protected static int _minAlphaBits = -1;
     protected static int _minStencilBits = -1;
     private PrimitivePickResults pickResults;
-    private Pickable currentlyPicked;
+    private Touchable currentlyPicked;
     private Tangible currentTangible;
     private Pressable currentlyPressed;
     private PickData tangiblePick;
@@ -329,8 +329,8 @@ public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
             final Tangible topLevel = getTangible(pick.getTargetMesh());
             setTangible(topLevel, pick);
 
-            if (topLevel instanceof Pickable) {
-                setPicked((Pickable) topLevel, pick);
+            if (topLevel instanceof Touchable) {
+                setPicked((Touchable) topLevel, pick);
             } else {
                 setPicked(null, null);
             }
@@ -347,22 +347,22 @@ public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
         this.tangiblePick = pick;
     }
 
-    private void setPicked(Pickable p, PickData pick) {
+    private void setPicked(Touchable p, PickData pick) {
 
         if (this.currentlyPicked == p) {
             if (p != null) {
-                currentlyPicked.pick(pick);
+                currentlyPicked.touching(pick);
             }
         } else {
 
             if (this.currentlyPicked != null) {
-                currentlyPicked.pickStop();
+                currentlyPicked.touchStop();
             }
 
             this.currentlyPicked = p;
 
             if (currentlyPicked != null) {
-                p.pickStart(pick);
+                p.touchStart(pick);
             }
         }
     }

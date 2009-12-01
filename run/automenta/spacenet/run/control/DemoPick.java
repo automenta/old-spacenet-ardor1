@@ -6,7 +6,7 @@
 package automenta.spacenet.run.control;
 
 import automenta.spacenet.run.ArdorSpaceTime;
-import automenta.spacenet.space.control.Pickable;
+import automenta.spacenet.space.control.Touchable;
 import automenta.spacenet.space.control.Pressable;
 import automenta.spacenet.space.geom.Box;
 import automenta.spacenet.space.geom.Rect;
@@ -21,7 +21,7 @@ import com.google.inject.Inject;
 public class DemoPick extends ArdorSpaceTime {
 
 
-    public class PickableRect extends Rect implements Pickable {
+    public class PickableRect extends Rect implements Touchable {
         private final ColorSurface cs;
 
         public PickableRect() {
@@ -31,11 +31,11 @@ public class DemoPick extends ArdorSpaceTime {
         }
 
         @Override
-        public void pickStart(PickData pick) {
+        public void touchStart(PickData pick) {
         }
 
         @Override
-        public void pick(PickData pick) {
+        public void touching(PickData pick) {
             
             int numInt = pick.getIntersectionRecord().getNumberOfIntersection();
             if (numInt != 1) {
@@ -49,14 +49,14 @@ public class DemoPick extends ArdorSpaceTime {
         }
 
         @Override
-        public void pickStop() {
+        public void touchStop() {
         }
 
         @Override public boolean isTangible() { return true; }
 
     }
 
-    public class PickableBox extends Box implements Pickable {
+    public class PickableBox extends Box implements Touchable {
         private final ColorSurface color;
 
         public PickableBox() {
@@ -64,21 +64,21 @@ public class DemoPick extends ArdorSpaceTime {
 
             color = add(new ColorSurface(1,1,1));
 
-            pickStop();
+            touchStop();
         }
 
         @Override
-        public void pickStart(PickData pick) {
+        public void touchStart(PickData pick) {
             color.color(1, 0, 0);
         }
 
         @Override
-        public void pickStop() {
+        public void touchStop() {
             color.color(0, 0, 1);
         }
 
         @Override
-        public void pick(PickData pick) {
+        public void touching(PickData pick) {
         }
 
         @Override public boolean isTangible() { return true; }
