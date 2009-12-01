@@ -60,7 +60,7 @@ public class DemoPick extends ArdorSpaceTime {
         private final ColorSurface color;
 
         public PickableBox() {
-            super(BoxShape.Sided);
+            super(BoxShape.Cubic);
 
             color = add(new ColorSurface(1,1,1));
 
@@ -90,7 +90,7 @@ public class DemoPick extends ArdorSpaceTime {
         private final ColorSurface color;
 
         public PressableBox() {
-            super(BoxShape.Sided);
+            super(BoxShape.Cubic);
 
             color = add(new ColorSurface(1,1,1));
 

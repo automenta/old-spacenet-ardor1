@@ -10,6 +10,7 @@ import automenta.spacenet.var.V3;
 import automenta.spacenet.var.V3.IfV3Changes;
 import com.ardor3d.bounding.OrientedBoundingBox;
 import com.ardor3d.scenegraph.Spatial;
+import com.ardor3d.scenegraph.shape.Sphere;
 
 /**
  *
@@ -23,10 +24,11 @@ public class Box extends Space implements HasPosition3, HasScale3 {
     private final Quat ori;
     private IfV3Changes positionChange;
     private IfV3Changes scaleChange;
+    private BoxShape currentShape;
 
     public static enum BoxShape {
 
-        Empty, Sided /*, Spheroid*/
+        Empty, Cubic, Spheroid
 
     }
 
@@ -81,6 +83,9 @@ public class Box extends Space implements HasPosition3, HasScale3 {
     }
 
     public void setShape(BoxShape shape) {
+        if (this.currentShape == shape)
+            return;
+        
         if (shapeSpatial != null) {
             detachChild(shapeSpatial);
         }
@@ -90,12 +95,19 @@ public class Box extends Space implements HasPosition3, HasScale3 {
             case Empty:
                 shapeSpatial = null;
                 break;
-            case Sided:
+            case Cubic:
                 com.ardor3d.scenegraph.shape.Box b = new com.ardor3d.scenegraph.shape.Box();
                 b.setModelBound(new OrientedBoundingBox());
                 shapeSpatial = b;
                 break;
+            case Spheroid:
+                Sphere s = new Sphere("", 12, 12, 0.5);
+                s.setModelBound(new OrientedBoundingBox());
+                shapeSpatial = s;
+                break;
         }
+        
+        this.currentShape = shape;
 
         if (shapeSpatial != null) {
             attachChild(shapeSpatial);

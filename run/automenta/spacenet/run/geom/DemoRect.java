@@ -46,13 +46,19 @@ public class DemoRect extends ArdorSpaceTime {
             @Override protected void update(double t, double dt, Spatial s) {
                 r.move(Math.cos(t), Math.sin(t), 0);
                 
-                double sc = 1.0 + Math.cos(t*10.0)/5.0;
-                r.scale(sc, sc);
+                double sw = 1.0 + Math.cos(t*10.0)/5.0;
+                double sh = 1.0 + Math.sin(t*10.0)/5.0;
+                r.scale(sw, sh);
                 
-                float r = (float)((1.0 + Math.cos(t)) * 0.5);
-                float g = 0.5f;
-                float b = 0.2f;
-                cs.color(r, g, b);
+                float cr = (float)((1.0 + Math.cos(t)) * 0.5);
+                float cg = 0.5f;
+                float cb = 0.2f;
+                cs.color(cr, cg, cb);
+
+                if (Math.cos(t*4.0) < 0)
+                    r.setShape(RectShape.Ellipse);
+                else
+                    r.setShape(RectShape.Rect);
             }
         });
     }

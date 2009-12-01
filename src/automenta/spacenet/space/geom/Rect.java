@@ -15,6 +15,7 @@ import automenta.spacenet.var.V3;
 import automenta.spacenet.var.V3.IfV3Changes;
 import com.ardor3d.bounding.OrientedBoundingBox;
 import com.ardor3d.scenegraph.Spatial;
+import com.ardor3d.scenegraph.shape.Disk;
 import com.ardor3d.scenegraph.shape.Quad;
 
 /**
@@ -29,10 +30,11 @@ public class Rect extends Space implements HasPosition3, HasScale2 {
     private final Quat ori;
     private IfV3Changes positionChange;
     private IfV2Changes scaleChange;
+    private RectShape currentShape;
 
     public static enum RectShape {
 
-        Empty, Rect
+        Empty, Rect, Ellipse
 
     }
 
@@ -83,6 +85,9 @@ public class Rect extends Space implements HasPosition3, HasScale2 {
     }
 
     public void setShape(RectShape shape) {
+        if (this.currentShape == shape)
+            return;
+        
         if (shapeSpatial != null) {
             detachChild(shapeSpatial);
         }
@@ -96,7 +101,14 @@ public class Rect extends Space implements HasPosition3, HasScale2 {
                 s.setModelBound(new OrientedBoundingBox());
                 shapeSpatial = s;
                 break;
+            case Ellipse:
+                Disk d = new com.ardor3d.scenegraph.shape.Disk("", 12, 12, 0.5);
+                d.setModelBound(new OrientedBoundingBox());
+                shapeSpatial = d;
+                break;
         }
+
+        this.currentShape = shape;
 
         if (shapeSpatial!=null) {
             attachChild(shapeSpatial);

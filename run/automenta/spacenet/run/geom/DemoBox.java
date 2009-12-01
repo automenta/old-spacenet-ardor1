@@ -38,7 +38,7 @@ public class DemoBox extends ArdorSpaceTime {
         final V3 scale = new V3(1,1,1);
         final Quat orientation = Quat.fromAngles(0, 0, 0);
         
-        final Box b = getRoot().add(new Box(pos, scale, orientation, BoxShape.Sided));
+        final Box b = getRoot().add(new Box(pos, scale, orientation, BoxShape.Cubic));
         final ColorSurface cs = b.add(new ColorSurface(0.8f, 0.5f, 0.3f));
 
         b.add(new Repeat() {
@@ -48,10 +48,16 @@ public class DemoBox extends ArdorSpaceTime {
                 double sc = 1.0 + Math.cos(t*10.0)/5.0;
                 b.scale(sc, sc, sc);
                 
-                float r = (float)((1.0 + Math.cos(t)) * 0.5);
-                float g = 0.5f;
-                float b = 0.2f;
-                cs.color(r, g, b);
+                float cr = (float)((1.0 + Math.cos(t)) * 0.5);
+                float cg = 0.5f;
+                float cb = 0.2f;
+                cs.color(cr, cg, cb);
+
+                if (Math.cos(t*4.0) < 0)
+                    b.setShape(BoxShape.Cubic);
+                else
+                    b.setShape(BoxShape.Spheroid);
+
             }
         });
     }
