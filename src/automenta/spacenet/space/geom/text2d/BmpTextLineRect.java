@@ -2,35 +2,26 @@ package automenta.spacenet.space.geom.text2d;
 
 import java.util.LinkedList;
 
-import automenta.spacenet.space.jme.video.Jme;
 import com.ardor3d.math.ColorRGBA;
-import com.ardor3d.renderer.Renderer;
 import com.ardor3d.renderer.state.BlendState;
 import com.ardor3d.renderer.state.BlendState.DestinationFunction;
 import com.ardor3d.renderer.state.BlendState.SourceFunction;
+import com.ardor3d.renderer.state.MaterialState;
 import com.ardor3d.renderer.state.ZBufferState;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.shape.Quad;
-import com.jme.renderer.ColorRGBA;
-import com.jme.renderer.Renderer;
-import com.jme.scene.Node;
-import com.jme.scene.shape.Quad;
-import com.jme.scene.state.BlendState;
-import com.jme.scene.state.BlendState.DestinationFunction;
-import com.jme.scene.state.BlendState.SourceFunction;
-import com.jme.scene.state.lwjgl.LWJGLZBufferState;
 
 /**
  * 
  * @author Victor Porof, blue_veek@yahoo.com
  */
-public class BitmapTextLineRectNode extends Node {
+public class BmpTextLineRect extends Node {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public GFont gFont;
+	public BmpFont gFont;
 	private String text;
 	private ColorRGBA fill;
 	private LinkedList<Quad> charQuads = new LinkedList<Quad>();
@@ -41,7 +32,7 @@ public class BitmapTextLineRectNode extends Node {
 	private float width;
 	private float height;
 
-	public BitmapTextLineRectNode(String text, GFont gFont, ColorRGBA fill, float size, float kerneling, Renderer renderer) {
+	public BmpTextLineRect(String text, BmpFont gFont, ColorRGBA fill, float size, float kerneling) {
 		super();
 		
 		this.fill = fill;
@@ -49,7 +40,7 @@ public class BitmapTextLineRectNode extends Node {
 		this.size = size;
 		this.kerneling = kerneling;
 
-		BlendState bs = renderer.createBlendState();
+		BlendState bs = new BlendState();
 		bs.setBlendEnabled(true);
 		bs.setSourceFunction(SourceFunction.SourceAlpha);
 		bs.setDestinationFunction(DestinationFunction.OneMinusSourceAlpha);
@@ -60,9 +51,9 @@ public class BitmapTextLineRectNode extends Node {
 	}
 
 	private void construct() {
-		Jme.doLater(new Runnable() {
-
-			@Override public void run() {
+//		Jme.doLater(new Runnable() {
+//
+//			@Override public void run() {
 				scale = size / gFont.getMetricsHeights();
 				spacing = 0;
 				for (int i = 0; i < charQuads.size(); i++) {
@@ -70,13 +61,11 @@ public class BitmapTextLineRectNode extends Node {
 						float positionX = spacing * scale
 								+ gFont.getMetricsWidths()[text.charAt(i)] * scale / 2f;
 						float positionY = gFont.getTextDescent() * scale;
-						charQuads.get(i).getLocalTranslation().setX(positionX);
-						charQuads.get(i).getLocalTranslation().setY(positionY);
+						charQuads.get(i).setTranslation(positionX, positionY, 0);
 
 						float sizeX = size;
 						float sizeY = size;
-						charQuads.get(i).getLocalScale().setX(sizeX);
-						charQuads.get(i).getLocalScale().setY(sizeY);
+                        charQuads.get(i).setScale(sizeX, sizeY, 1);
 
 						if (fill != null) {
 							charQuads.get(i).setSolidColor(fill);
@@ -93,13 +82,11 @@ public class BitmapTextLineRectNode extends Node {
 					float positionX = spacing * scale
 							+ gFont.getMetricsWidths()[text.charAt(i)] * scale / 2f;
 					float positionY = gFont.getTextDescent() * scale;
-					quad.getLocalTranslation().setX(positionX);
-					quad.getLocalTranslation().setY(positionY);
+                    quad.setTranslation(positionX, positionY, quad.getTranslation().getZ());
 
 					float sizeX = size;
 					float sizeY = size;
-					quad.getLocalScale().setX(sizeX);
-					quad.getLocalScale().setY(sizeY);
+					quad.setScale(sizeX, sizeY, quad.getScale().getZ());
 
 					if (fill != null) {
 						quad.setSolidColor(fill);
@@ -120,21 +107,28 @@ public class BitmapTextLineRectNode extends Node {
 
 				width = spacing * scale;
 				height = size;
-				
-				getLocalTranslation().set(-0.5f, -0.25f, 0);
+
+
+				setTranslation(-0.5f, -0.25f, 0);
 				if ((width > 0.0) && (height > 0.0))
-					getLocalScale().set(1.0f / width, 0.5f / height, 1.0f);
+					setScale(1.0f / width, 0.5f / height, 1.0f);
+
+
+                MaterialState ms = new MaterialState();
+                ms.setDiffuse(fill);
+                setRenderState(ms);
 
 				ZBufferState zb = new ZBufferState();
 				zb.setWritable(false);
 				zb.setEnabled(true);
 				setRenderState(zb);
 
-				updateRenderState();
+				//updateRenderState();
 				
-			}
-			
-		});
+//			}
+//
+//		});
+                
 	}
 
 	public void setText(Object text) {

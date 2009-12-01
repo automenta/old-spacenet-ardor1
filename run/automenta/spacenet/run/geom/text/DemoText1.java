@@ -5,17 +5,14 @@
 package automenta.spacenet.run.geom.text;
 
 import automenta.spacenet.run.ArdorSpaceTime;
+import automenta.spacenet.space.geom.text2d.BmpTextLineRect;
+import automenta.spacenet.space.geom.text2d.BmpFont;
+import automenta.spacenet.space.surface.ColorSurface;
 import com.ardor3d.framework.FrameHandler;
 import com.ardor3d.input.logical.LogicalLayer;
-import com.ardor3d.ui.text.BMFont;
-import com.ardor3d.ui.text.BMText;
-import com.ardor3d.util.resource.ResourceLocator;
-import com.ardor3d.util.resource.ResourceSource;
+import com.ardor3d.math.ColorRGBA;
 import com.google.inject.Inject;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.awt.Font;
 
 /**
  *
@@ -34,6 +31,16 @@ public class DemoText1 extends ArdorSpaceTime {
 
     @Override
     protected void initWindow() {
-            getRoot().add(new BMText("", "Abcdef", font));
+        Font awtFont = new Font("Arial", Font.PLAIN, 32);
+        
+        BmpFont font = new BmpFont(awtFont);
+        ColorRGBA fillColor = new ColorRGBA(ColorRGBA.ORANGE);
+        float size = 32.0f;
+        float kerneling = 0f;
+        BmpTextLineRect tn = new BmpTextLineRect("Abc", font, fillColor, size, kerneling);
+
+        //tn.add(new ColorSurface(fillColor));
+        
+        getRoot().add(tn);
     }
 }

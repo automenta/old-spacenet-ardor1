@@ -1,7 +1,7 @@
 /**
  * 
  */
-package automenta.spacenet.space.geom.text2d;
+package automenta.spacenet.space.geom.text3d;
 
 import java.util.Map;
 import java.util.logging.Level;

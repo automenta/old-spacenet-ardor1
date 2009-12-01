@@ -93,13 +93,13 @@ public class TextLineRectNode extends RectNode {
 	private void createBitmap() {
 		Renderer renderer = getJme().getDisplaySystem().getRenderer();
 		
-		GFont gFont = GFont.get(getFont(), renderer);
+		BmpFont gFont = BmpFont.get(getFont(), renderer);
 		
 
 		float size = 0.5f;
 		String text = tRect.getText().s();
 		ColorRGBA fill = Jme.asJMEColor(getFont().getColor());
-		BitmapTextLineRectNode b = new BitmapTextLineRectNode(text, gFont, fill, size, 0.0f, renderer);
+		BmpTextLineRect b = new BmpTextLineRect(text, gFont, fill, size, 0.0f, renderer);
 		b.setRenderQueueMode(Renderer.QUEUE_TRANSPARENT);
 		attachChild(b);
 
