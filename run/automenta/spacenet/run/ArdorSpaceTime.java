@@ -77,6 +77,8 @@ import com.ardor3d.util.GameTaskQueue;
 import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.ReadOnlyTimer;
 import com.ardor3d.util.geom.Debugger;
+import com.ardor3d.util.resource.ResourceLocatorTool;
+import com.ardor3d.util.resource.SimpleResourceLocator;
 import com.ardor3d.util.screen.ScreenExporter;
 import com.ardor3d.util.stat.StatCollector;
 import com.google.common.base.Predicate;
@@ -90,6 +92,7 @@ import com.google.inject.Provider;
 import com.google.inject.Scopes;
 import com.google.inject.Stage;
 import java.awt.event.ComponentAdapter;
+import java.net.URISyntaxException;
 
 public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
 
@@ -158,10 +161,10 @@ public abstract class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
         AWTImageLoader.registerLoader();
 
 //        try {
-//            SimpleResourceLocator srl = new SimpleResourceLocator(ExampleBase.class.getClassLoader().getResource(
+//            SimpleResourceLocator srl = new SimpleResourceLocator(ArdorSpaceTime.class.getClassLoader().getResource(
 //                    "com/ardor3d/example/media/"));
 //            ResourceLocatorTool.addResourceLocator(ResourceLocatorTool.TYPE_TEXTURE, srl);
-//            srl = new SimpleResourceLocator(ExampleBase.class.getClassLoader().getResource(
+//            srl = new SimpleResourceLocator(ArdorSpaceTime.class.getClassLoader().getResource(
 //                    "com/ardor3d/example/media/models/"));
 //            ResourceLocatorTool.addResourceLocator(ResourceLocatorTool.TYPE_MODEL, srl);
 //        } catch (final URISyntaxException ex) {
