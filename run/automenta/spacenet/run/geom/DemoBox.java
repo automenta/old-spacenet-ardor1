@@ -47,11 +47,12 @@ public class DemoBox extends ProcessBox {
                 float cb = 0.2f;
                 cs.color(cr, cg, cb);
 
-                if (Math.cos(t*4.0) < 0)
+                if (Math.cos(t*2.0) < 0)
                     b.setShape(BoxShape.Cubic);
                 else
                     b.setShape(BoxShape.Spheroid);
 
+                orientation.set(Quat.fromAngles(t, t/2, t/4));
             }
         });
     }

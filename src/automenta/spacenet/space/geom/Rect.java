@@ -9,6 +9,7 @@ import automenta.spacenet.space.HasPosition3;
 import automenta.spacenet.space.HasScale2;
 import automenta.spacenet.space.Space;
 import automenta.spacenet.var.Quat;
+import automenta.spacenet.var.Quat.IfQuatChanges;
 import automenta.spacenet.var.V2;
 import automenta.spacenet.var.V2.IfV2Changes;
 import automenta.spacenet.var.V3;
@@ -31,6 +32,8 @@ public class Rect extends Space implements HasPosition3, HasScale2 {
     private IfV3Changes positionChange;
     private IfV2Changes scaleChange;
     private RectShape currentShape;
+    private IfQuatChanges oriChange;
+
 
     public static enum RectShape {
 
@@ -64,24 +67,32 @@ public class Rect extends Space implements HasPosition3, HasScale2 {
                 sizeChanged();
             }
         });
-
-        //TODO add Orientation change
+        oriChange = ori.add(new IfQuatChanges() {
+            @Override public void onQuatChanged(Quat q) {
+                oriChanged();
+            }
+        });
 
         positionChanged();
         sizeChanged();
+        oriChanged();
 
     }
     protected void beforeDetached(Spatial parent) {
         //System.out.println(this + " detached from " + parent);
         position.remove(positionChange);
         scale.remove(scaleChange);
+        ori.remove(oriChange);
     }
 
     protected void positionChanged() {
         setTranslation(position);
     }
     protected void sizeChanged() {
-        setScale(scale.getX(), scale.getY(), 1.0);
+        setScale(scale.getX(), scale.getY(), getZScale());
+    }
+    protected void oriChanged() {
+        setRotation(ori);
     }
 
     public void setShape(RectShape shape) {
@@ -136,6 +147,10 @@ public class Rect extends Space implements HasPosition3, HasScale2 {
 
     @Override public V2 getSize() {
         return scale;
+    }
+
+    protected double getZScale() {
+        return 1.0;
     }
 
 

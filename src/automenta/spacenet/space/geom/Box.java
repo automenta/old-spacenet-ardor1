@@ -6,6 +6,7 @@ package automenta.spacenet.space.geom;
 
 import automenta.spacenet.space.*;
 import automenta.spacenet.var.Quat;
+import automenta.spacenet.var.Quat.IfQuatChanges;
 import automenta.spacenet.var.V3;
 import automenta.spacenet.var.V3.IfV3Changes;
 import com.ardor3d.bounding.OrientedBoundingBox;
@@ -24,12 +25,12 @@ public class Box extends Space implements HasPosition3, HasScale3 {
     private final Quat ori;
     private IfV3Changes positionChange;
     private IfV3Changes scaleChange;
+    private IfQuatChanges oriChange;
     private BoxShape currentShape;
 
+
     public static enum BoxShape {
-
         Empty, Cubic, Spheroid
-
     }
 
     public Box(BoxShape b) {
@@ -60,18 +61,22 @@ public class Box extends Space implements HasPosition3, HasScale3 {
                 sizeChanged();
             }
         });
-
-        //TODO add Orientation change
+        oriChange = ori.add(new IfQuatChanges() {
+            @Override public void onQuatChanged(Quat q) {
+                oriChanged();
+            }
+        });
 
         positionChanged();
         sizeChanged();
+        oriChanged();
 
     }
 
     @Override protected void beforeDetached(Spatial parent) {
-        System.out.println(this + " detached from " + parent);
         position.remove(positionChange);
         scale.remove(scaleChange);
+        ori.remove(oriChange);
     }
 
     protected void positionChanged() {
@@ -80,6 +85,10 @@ public class Box extends Space implements HasPosition3, HasScale3 {
 
     protected void sizeChanged() {
         setScale(scale);
+    }
+
+    private void oriChanged() {
+        setRotation(ori);
     }
 
     public void setShape(BoxShape shape) {

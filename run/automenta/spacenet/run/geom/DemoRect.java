@@ -52,6 +52,8 @@ public class DemoRect extends ProcessBox {
                     r.setShape(RectShape.Ellipse);
                 else
                     r.setShape(RectShape.Rect);
+
+                orientation.set(t/4.0, t/2.0, t);
             }
         });
     }
