@@ -5,10 +5,7 @@
 
 package automenta.spacenet.space.widget;
 
-/**
- *
- * @author seh
- */
-public class Window extends Panel {
+/** similar to JLabel */
+public class TextLine {
 
 }

@@ -9,6 +9,6 @@ package automenta.spacenet.space.widget;
  *
  * @author seh
  */
-public class Window extends Panel {
+public class TabPanel {
 
 }

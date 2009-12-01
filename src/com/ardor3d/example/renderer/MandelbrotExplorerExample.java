@@ -97,8 +97,8 @@ public class MandelbrotExplorerExample extends ArdorSpaceTime {
     }
 
     @Override
-    protected void registerInputTriggers() {
-        super.registerInputTriggers();
+    protected void initInput() {
+        super.initInput();
         _logicalLayer.registerTrigger(new InputTrigger(new MouseButtonReleasedCondition(MouseButton.LEFT),
                 new TriggerAction() {
                     public void perform(final Canvas source, final TwoInputStates inputState, final double tpf) {

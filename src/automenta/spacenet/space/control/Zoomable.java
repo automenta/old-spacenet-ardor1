@@ -5,6 +5,12 @@
 
 package automenta.spacenet.space.control;
 
-/** receives text (ex: keyboard or voice input), and possibly returns text */
-public interface Textable {
+/**
+ *
+ * @author seh
+ */
+public interface Zoomable {
+    public void zoomStart();
+    public void zoomStop();
+    public boolean isZoomable();
 }

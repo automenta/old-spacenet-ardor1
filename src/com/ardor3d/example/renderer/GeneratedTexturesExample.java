@@ -285,8 +285,8 @@ public class GeneratedTexturesExample extends ArdorSpaceTime {
     }
 
     @Override
-    protected void registerInputTriggers() {
-        super.registerInputTriggers();
+    protected void initInput() {
+        super.initInput();
 
         _logicalLayer.registerTrigger(new InputTrigger(TriggerConditions.mouseMoved(), new TriggerAction() {
             public void perform(final Canvas source, final TwoInputStates inputStates, final double tpf) {

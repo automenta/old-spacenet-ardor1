@@ -7,6 +7,7 @@ package automenta.spacenet.run.control;
 
 import automenta.spacenet.run.ArdorSpaceTime;
 import automenta.spacenet.space.control.Pickable;
+import automenta.spacenet.space.control.Pressable;
 import automenta.spacenet.space.geom.Box;
 import automenta.spacenet.space.geom.Rect;
 import automenta.spacenet.space.surface.ColorSurface;
@@ -84,7 +85,35 @@ public class DemoPick extends ArdorSpaceTime {
 
         
     }
-    
+
+    public class PressableBox extends Box implements Pressable {
+        private final ColorSurface color;
+
+        public PressableBox() {
+            super(BoxShape.Sided);
+
+            color = add(new ColorSurface(1,1,1));
+
+            pressStop(null);
+        }
+
+
+        @Override public boolean isTangible() { return true; }
+
+        @Override
+        public void pressStart(PickData pick) {
+            color.color(0,1,0);
+        }
+
+        @Override
+        public void pressStop(PickData pick) {
+            color.color(0,0,1);
+        }
+
+
+    }
+
+
 
 
     @Inject
@@ -95,13 +124,9 @@ public class DemoPick extends ArdorSpaceTime {
 
     @Override
     protected void initWindow() {
-        Node n = new Node();
-        getRoot().add(n);
-        
-        getRoot().add(new PickableBox().move(-1, 0, 0));
-        //n.attachChild(new PickableRect().move(-1, 0, 0));
-        getRoot().add(new PickableRect().move(1, 0, 0));
-        //n.attachChild(new PickableRect().move(1, 0, 0));
+        getRoot().add(new PickableBox().move(-1, 1, 0));
+        getRoot().add(new PickableRect().move(1, 1, 0));
+        getRoot().add(new PressableBox().move(-1, -1, 0));
 
     }
 

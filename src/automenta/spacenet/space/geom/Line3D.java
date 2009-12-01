@@ -3,12 +3,12 @@
  * and open the template in the editor.
  */
 
-package automenta.spacenet.space.widget;
+package automenta.spacenet.space.geom;
 
 /**
  *
  * @author seh
  */
-public class Window extends Panel {
+public class Line3D {
 
 }

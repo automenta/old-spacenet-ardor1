@@ -3,12 +3,12 @@
  * and open the template in the editor.
  */
 
-package automenta.spacenet.space.control;
+package automenta.spacenet.run.widget;
 
 /**
  *
  * @author seh
  */
-public interface Draggable2D {
+public class DemoPanel {
 
 }

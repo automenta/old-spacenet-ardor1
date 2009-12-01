@@ -137,8 +137,8 @@ public class ShapesExample extends ArdorSpaceTime {
     }
 
     @Override
-    protected void registerInputTriggers() {
-        super.registerInputTriggers();
+    protected void initInput() {
+        super.initInput();
 
         // Add mouse-over to show labels
 

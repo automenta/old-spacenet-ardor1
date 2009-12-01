@@ -1,6 +1,5 @@
 package automenta.spacenet.space.geom.text2d;
 
-import com.ardor3d.image.Image;
 import com.ardor3d.image.Image.Format;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -8,13 +7,8 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
 import com.ardor3d.image.Texture;
-import com.ardor3d.renderer.Renderer;
 import com.ardor3d.renderer.state.TextureState;
 import com.ardor3d.util.TextureManager;
-import com.ardor3d.util.geom.BufferUtils;
-import java.awt.image.ColorModel;
-import java.awt.image.PixelGrabber;
-import java.nio.ByteBuffer;
 import java.util.logging.Logger;
 
 /**
@@ -22,6 +16,7 @@ import java.util.logging.Logger;
  * @author Victor Porof, blue_veek@yahoo.com
  */
 public class BmpFont {
+    Format fontFormat = Format.Guess; //Format.GuessNoCompression
 
     private static final Logger logger = Logger.getLogger(BmpFont.class.getName());
     //private static Map<VectorFont, GFont> gFonts = new HashMap();
@@ -72,11 +67,10 @@ public class BmpFont {
             gt.drawString(String.valueOf((char) i), posX, posY);
 
             TextureState cTextureState = new TextureState();
-
-
+            
             Texture cTexure = TextureManager.loadFromImage(TextureManagerExt.loadImage(bImage, true),
                 Texture.MinificationFilter.Trilinear,
-                Format.Guess, true);
+                fontFormat, true);
 
             cTextureState.setTexture(cTexure);
 

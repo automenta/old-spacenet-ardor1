@@ -101,8 +101,8 @@ public class ViewportExample extends ArdorSpaceTime {
     }
 
     @Override
-    protected void registerInputTriggers() {
-        super.registerInputTriggers();
+    protected void initInput() {
+        super.initInput();
 
         _logicalLayer.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.V), new TriggerAction() {
             public void perform(final Canvas source, final TwoInputStates inputStates, final double tpf) {

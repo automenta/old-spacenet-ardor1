@@ -160,8 +160,8 @@ public class DisplayListExample extends ArdorSpaceTime {
     }
 
     @Override
-    protected void registerInputTriggers() {
-        super.registerInputTriggers();
+    protected void initInput() {
+        super.initInput();
         _logicalLayer.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.SPACE), new TriggerAction() {
             private boolean useDL = true;
 
