@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package automenta.spacenet.space.control.pointer;
 
 import automenta.spacenet.run.ArdorSpaceTime;
+import automenta.spacenet.space.control.Draggable;
 import automenta.spacenet.space.control.Pressable;
 import automenta.spacenet.space.control.Tangible;
 import automenta.spacenet.space.control.Touchable;
@@ -35,18 +35,114 @@ import com.ardor3d.scenegraph.Spatial;
  * @author seh
  */
 public class ArdorPointer {
+
     private PrimitivePickResults pickResults;
     private Touchable currentlyPicked;
     private Tangible currentTangible;
     private Pressable currentlyPressed;
     private PickData tangiblePick;
     private final ArdorSpaceTime spacetime;
+    private Draggable currentDraggable, beingDragged;
+    Vector2 pixelPos = new Vector2();
+    final Ray3 pickRay = new Ray3();
+
+    Vector2 pixelPosDragStart = new Vector2();
+
+    final Ray3 rayDrag = new Ray3();
+    final Ray3 rayDragStart = new Ray3();
+    final Ray3 rayDragStop = new Ray3();
+    Vector2 pixelPosDragStop  = new Vector2();
+
+    protected void setRay(Vector2 pixelPos, Ray3 targetRay) {
+        getCanvas().getCanvasRenderer().getCamera().getPickRay(pixelPos, false, targetRay);
+    }
+    protected void moved() {
+        setRay(pixelPos, pickRay);
+
+        doPick(pickRay);
+
+        if (beingDragged!=null) {
+            dragged();
+        }
+        else if (currentDraggable!=null) {
+            //System.out.println(" drag dist: " + pixelPosDragStart.distance(pixelPos) + " @ " + pixelPos + " <- " + pixelPosDragStart);
+            double dist = pixelPosDragStart.distance(pixelPos);
+            if (dist > getDragThreshold()) {
+                dragStart();
+            }
+        } 
+        else {
+            pixelPosDragStart.set(pixelPos);
+        }
+
+
+    }
+
+    protected void dragStart() {
+        setRay(pixelPos, rayDragStart);
+        beingDragged = currentDraggable;
+
+        beingDragged.startDrag(rayDragStart);
+    }
+    
+    protected void dragged() {
+        setRay(pixelPos, rayDrag);
+        beingDragged.continueDrag(rayDrag);
+    }
+    protected void dragStop() {
+        pixelPosDragStop.set(pixelPos);
+        setRay(pixelPosDragStop, rayDragStop);
+
+        beingDragged.stopDrag(rayDragStop);
+    }
+
+    protected double getDragThreshold() { return 1.01; }
+
+    protected void leftPressed() {
+//        if (getMouseManager().isSetGrabbedSupported()) {
+//            getMouseManager().setGrabbed(GrabbedState.GRABBED);
+//        }
+
+        if (currentTangible instanceof Pressable) {
+            currentlyPressed = (Pressable) currentTangible;
+            ((Pressable) currentTangible).pressStart(tangiblePick);
+        }
+
+        if (currentTangible instanceof Draggable) {
+            if (currentDraggable!=currentTangible) {
+                currentDraggable = (Draggable) currentTangible;
+                //System.out.println("start drag " + pixelPos);
+                pixelPosDragStart.set(pixelPos);
+            }
+        }
+
+    }
+
+    protected void leftReleased() {
+//        if (getMouseManager().isSetGrabbedSupported()) {
+//            getMouseManager().setGrabbed(GrabbedState.NOT_GRABBED);
+//        }
+
+        if (currentlyPressed != null) {
+            currentlyPressed.pressStop(tangiblePick);
+            currentlyPressed = null;
+        }
+
+        currentDraggable = null;
+        
+        if (beingDragged!=null) {
+            dragStop();
+        }
+        beingDragged = null;
+
+
+    }
 
     public ArdorPointer(ArdorSpaceTime spacetime) {
         super();
 
         this.spacetime = spacetime;
-        
+
         // Set up a reusable pick results
         pickResults = new PrimitivePickResults();
         pickResults.setCheckDistance(true);
@@ -77,18 +173,12 @@ public class ArdorPointer {
 //            }
 //        }));
 
+
         getLogicalLayer().registerTrigger(new InputTrigger(new MouseButtonPressedCondition(MouseButton.LEFT),
             new TriggerAction() {
 
                 public void perform(final Canvas source, final TwoInputStates inputState, final double tpf) {
-                    if (getMouseManager().isSetGrabbedSupported()) {
-                        getMouseManager().setGrabbed(GrabbedState.GRABBED);
-                    }
-
-                    if (currentTangible instanceof Pressable) {
-                        currentlyPressed = (Pressable)currentTangible;
-                        ((Pressable) currentTangible).pressStart(tangiblePick);
-                    }
+                    leftPressed();
                 }
             }));
 
@@ -96,27 +186,16 @@ public class ArdorPointer {
             new TriggerAction() {
 
                 public void perform(final Canvas source, final TwoInputStates inputState, final double tpf) {
-                    if (getMouseManager().isSetGrabbedSupported()) {
-                        getMouseManager().setGrabbed(GrabbedState.NOT_GRABBED);
-                    }
-
-                    if (currentlyPressed != null) {
-                        currentlyPressed.pressStop(tangiblePick);
-                        currentlyPressed = null;
-                    }
+                    leftReleased();
                 }
             }));
 
         getLogicalLayer().registerTrigger(new InputTrigger(new MouseMovedCondition(), new TriggerAction() {
 
-            Vector2 pos = new Vector2();
-            final Ray3 pickRay = new Ray3();
-
             public void perform(final Canvas source, final TwoInputStates inputStates, final double tpf) {
-                pos.set(inputStates.getCurrent().getMouseState().getX(), inputStates.getCurrent().getMouseState().getY());
-                getCanvas().getCanvasRenderer().getCamera().getPickRay(pos, false, pickRay);
+                pixelPos.set(inputStates.getCurrent().getMouseState().getX(), inputStates.getCurrent().getMouseState().getY());
 
-                doPick(pickRay);
+                moved();
             }
         }));
 
@@ -133,11 +212,10 @@ public class ArdorPointer {
     public LogicalLayer getLogicalLayer() {
         return spacetime.getLogicalLayer();
     }
+
     public MouseManager getMouseManager() {
         return spacetime.getMouseManager();
     }
-    
-
 
     protected void processPicks(final PrimitivePickResults pickResults) {
 
@@ -215,6 +293,4 @@ public class ArdorPointer {
 
         return pickResults;
     }
-
-
 }

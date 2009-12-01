@@ -15,7 +15,7 @@ import automenta.spacenet.space.video.ProcessBox;
 import com.ardor3d.intersection.PickData;
 import com.ardor3d.math.Vector3;
 
-public class DemoPick extends ProcessBox {
+public class DemoTouchClick extends ProcessBox {
 
 
     public class PickableRect extends Rect implements Touchable {
@@ -126,7 +126,7 @@ public class DemoPick extends ProcessBox {
 
 
     public static void main(String[] args) {
-        ArdorSpaceTime.newWindow(new DemoPick());
+        ArdorSpaceTime.newWindow(new DemoTouchClick());
     }
 
     
