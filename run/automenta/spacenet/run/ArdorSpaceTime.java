@@ -471,7 +471,8 @@ abstract public class ArdorSpaceTime implements Runnable, Updater, Scene, Exit {
         }
 
 
-        _controlHandle = FirstPersonControl.setupTriggers(_logicalLayer, _worldUp, true);
+        //_controlHandle = FirstPersonControl.setupTriggers(_logicalLayer, _worldUp, true);
+        
 
 
         _logicalLayer.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.ESCAPE), new TriggerAction() {

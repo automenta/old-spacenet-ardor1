@@ -52,7 +52,7 @@ public class DemoBox extends ProcessBox {
                 else
                     b.setShape(BoxShape.Spheroid);
 
-                orientation.set(Quat.fromAngles(t, t/2, t/4));
+                orientation.set(t, t/2, t/4);
             }
         });
     }

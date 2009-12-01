@@ -141,4 +141,11 @@ public class Box extends Space implements HasPosition3, HasScale3 {
     public V3 getSize() {
         return scale;
     }
+
+    public Quat getOrientation() {
+        return ori;
+    }
+
+
+
 }
